@@ -4,31 +4,33 @@ const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
 
 const github = axios.create({
     baseURL: GITHUB_URL,
-    headers: {Authorization: `token ${GITHUB_TOKEN}`}
+    headers: { Authorization: `token ${GITHUB_TOKEN}` }
 })
 
 
 // search user
 
 export const searchUsers = async (text) => {
-    
+
     const params = new URLSearchParams({
         q: text,
     })
-
-    const response = await github.get(`/search/users?${params}`)
-
-    return response.data.items
+    try {
+        const response = await github.get(`/search/users?${params}`)
+        return response.data.items
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 // get user & repos
 
-export const getUserAndRepos = async(login) => {
+export const getUserAndRepos = async (login) => {
     const [user, repos] = await Promise.all([
         github.get(`/users/${login}`),
         github.get(`/users/${login}/repos`)
 
     ])
 
-    return {user: user.data, repos: repos.data}
+    return { user: user.data, repos: repos.data }
 }
